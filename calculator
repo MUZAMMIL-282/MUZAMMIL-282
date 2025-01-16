@@ -1,0 +1,44 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const display = document.getElementById("display");
+  const buttons = document.querySelectorAll(".btn");
+  
+  let currentValue = "0";
+  let previousValue = null;
+  let operator = null;
+
+  function updateDisplay() {
+    display.textContent = currentValue;
+  }
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      const value = button.getAttribute("data-value");
+
+      if (value === "C") {
+        currentValue = "0";
+        previousValue = null;
+        operator = null;
+      } else if (value === "=") {
+        if (operator && previousValue !== null) {
+          currentValue = eval(`${previousValue} ${operator} ${currentValue}`).toString();
+          previousValue = null;
+          operator = null;
+        }
+      } else if (["+", "-", "*", "/"].includes(value)) {
+        if (previousValue === null) {
+          previousValue = currentValue;
+        } else if (operator) {
+          previousValue = eval(`${previousValue} ${operator} ${currentValue}`).toString();
+        }
+        operator = value;
+        currentValue = "0";
+      } else {
+        currentValue = currentValue === "0" ? value : currentValue + value;
+      }
+
+      updateDisplay();
+    });
+  });
+
+  updateDisplay();
+});
